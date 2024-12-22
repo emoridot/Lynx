@@ -7,6 +7,15 @@ import random
 import os
 import bcrypt
 import base64
+from cryptography.fernet import Fernet
+
+key = input("Enter your access key for all passwords(leave blank if you dont have it(note : all the saved passwords will become invalid). If you'll enter invalid key, the program will crash!):")
+if key == "":
+    newkey = Fernet.generate_key()
+    print("Save this code somewhere safe (The one in the brackets, or the program wont run) : ", newkey)
+    key = newkey
+    
+    if os.path.exists('passwords.txt') : os.remove("passwords.txt")
 
 def generate_random_name(length):
     letters = string.ascii_lowercase
@@ -51,37 +60,58 @@ def generator():
     input("Press enter to proceed...")
     menu()
 
-def keychain():
-    '''
-    print("Welcome to XPass keychain [beta]")
-    choice = input("Menu:\n[1] - Add a new password\n[2] - View your passwords\n[3] - Exit to the XPass\n-> ")
-    
-    if choice == '1':
-        userinput = input("Enter a website for the password that you would like to add: ")
-        passinput = input("Enter password that will be saved and attached to the last input: ")
-        hashed_password = bcrypt.hashpw(passinput.encode('utf-8'), bcrypt.gensalt())
+def encrypt(password):
+    fernet = Fernet(key)
+    encrypted_password = fernet.encrypt(password.encode())
+    return encrypted_password.decode()
 
-        with open('b.txt', 'a') as f:
-            f.write(f'{userinput}:{hashed_password.decode()}\n')
+def decrypt(encrypted_password):
+    fernet = Fernet(key)
+    decrypted_password = fernet.decrypt(encrypted_password.encode()).decode()
+    return decrypted_password
+
+def keychain():
+    if key != "":
+        print("Welcome to XPass keychain [beta]")
+        choice = input("Menu:\n[1] - Add a new password\n[2] - View your passwords\n[3] - Exit to the XPass\n-> ")
+    
+        if choice == '1':
+            userinput = input("Enter a website for the password that you would like to add: ")
+            passinput = input("Enter password that will be saved and attached to the last input: ")
+            encrypted_pass = encrypt(passinput)
+
+            with open('passwords.txt', 'a') as f:
+                f.write(f"{userinput}:{encrypted_pass}\n")
         
-        keychain()
-    elif choice == '2':
-        with open('b.txt', 'r') as f:
-            for line in f:
-                parts = line.strip().split(':')
-                username = parts[0]
-                hashed_password = parts[1]
-                print(f"Website: {username}, password: {hashed_password}")  # Display hashed password
+            keychain()
+
+        elif choice == '2':
+
+            if not os.path.exists('passwords.txt'):
+                print("No passwords stored yet.")
+                keychain()
+            
+            with open('passwords.txt', 'r') as f:
+                for line in f:
+                    parts = line.strip().split(':')
+                    username = parts[0]
+                    encrypted_password = parts[1]
+                    decrypted_password = decrypt(encrypted_password)
+                    print(f"Website: {username}, Password: {decrypted_password}")
+                
                 input("Press any key to proceed")
                 keychain()
-    elif choice == '3':
-        menu()
+        elif choice == '3':
+            menu()
+        else:
+            print("Invalid choice. Please try again.")
+            keychain()
     else:
-        print("Invalid choice. Please try again.")
-        keychain()
-    '''
-    print("Work in progress...")
-    menu()
+        print("Invalid key.")
+        '''
+        print(Fore.MAGENTA + "Work in progress..." + Style.RESET_ALL) 
+        menu()
+        '''
 
 def check():
     if not os.path.exists('pass.txt'):
