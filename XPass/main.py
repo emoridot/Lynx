@@ -15,8 +15,13 @@ def generate_random_name(length):
 
 def xpass():
     checkinput = input(Fore.MAGENTA + "----------------------------------\nCheck your password for data breaches: \n->" + Style.RESET_ALL)
+
+    if not os.path.exists('py.txt'):
+        bpath = '_internal'
+    else :
+        bpath = 'XPass'
     
-    with open('XPass/breach.txt', 'r') as f:
+    with open(bpath + '/breach.txt', 'r') as f:
         if any(line.startswith(checkinput) for line in f):
             print(Fore.GREEN + checkinput + Fore.MAGENTA + " was found in our database. We recommend changing it." + Style.RESET_ALL)
         else:
@@ -111,6 +116,8 @@ def menu():
     else:
         print('Input is invalid')
         menu()
+
+
 
 version = "1.3"
 
