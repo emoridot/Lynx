@@ -7,15 +7,6 @@ import random
 import os
 import bcrypt
 import base64
-from cryptography.fernet import Fernet
-
-key = input("Enter your access key for all passwords(leave blank if you dont have it(note : all the saved passwords will become invalid). If you'll enter invalid key, the program will crash!):")
-if key == "":
-    newkey = Fernet.generate_key()
-    print("Save this code somewhere safe (The one in the brackets, or the program wont run) : ", newkey)
-    key = newkey
-    
-    if os.path.exists('passwords.txt') : os.remove("passwords.txt")
 
 def generate_random_name(length):
     letters = string.ascii_lowercase
@@ -24,13 +15,8 @@ def generate_random_name(length):
 
 def xpass():
     checkinput = input(Fore.MAGENTA + "----------------------------------\nCheck your password for data breaches: \n->" + Style.RESET_ALL)
-
-    if not os.path.exists('py.txt'):
-        bpath = '_internal'
-    else :
-        bpath = 'XPass'
     
-    with open(bpath + '/breach.txt', 'r') as f:
+    with open('XPass/breach.txt', 'r') as f:
         if any(line.startswith(checkinput) for line in f):
             print(Fore.GREEN + checkinput + Fore.MAGENTA + " was found in our database. We recommend changing it." + Style.RESET_ALL)
         else:
@@ -60,58 +46,37 @@ def generator():
     input("Press enter to proceed...")
     menu()
 
-def encrypt(password):
-    fernet = Fernet(key)
-    encrypted_password = fernet.encrypt(password.encode())
-    return encrypted_password.decode()
-
-def decrypt(encrypted_password):
-    fernet = Fernet(key)
-    decrypted_password = fernet.decrypt(encrypted_password.encode()).decode()
-    return decrypted_password
-
 def keychain():
-    if key != "":
-        print("Welcome to XPass keychain [beta]")
-        choice = input("Menu:\n[1] - Add a new password\n[2] - View your passwords\n[3] - Exit to the XPass\n-> ")
+    '''
+    print("Welcome to XPass keychain [beta]")
+    choice = input("Menu:\n[1] - Add a new password\n[2] - View your passwords\n[3] - Exit to the XPass\n-> ")
     
-        if choice == '1':
-            userinput = input("Enter a website for the password that you would like to add: ")
-            passinput = input("Enter password that will be saved and attached to the last input: ")
-            encrypted_pass = encrypt(passinput)
+    if choice == '1':
+        userinput = input("Enter a website for the password that you would like to add: ")
+        passinput = input("Enter password that will be saved and attached to the last input: ")
+        hashed_password = bcrypt.hashpw(passinput.encode('utf-8'), bcrypt.gensalt())
 
-            with open('passwords.txt', 'a') as f:
-                f.write(f"{userinput}:{encrypted_pass}\n")
+        with open('b.txt', 'a') as f:
+            f.write(f'{userinput}:{hashed_password.decode()}\n')
         
-            keychain()
-
-        elif choice == '2':
-
-            if not os.path.exists('passwords.txt'):
-                print("No passwords stored yet.")
-                keychain()
-            
-            with open('passwords.txt', 'r') as f:
-                for line in f:
-                    parts = line.strip().split(':')
-                    username = parts[0]
-                    encrypted_password = parts[1]
-                    decrypted_password = decrypt(encrypted_password)
-                    print(f"Website: {username}, Password: {decrypted_password}")
-                
+        keychain()
+    elif choice == '2':
+        with open('b.txt', 'r') as f:
+            for line in f:
+                parts = line.strip().split(':')
+                username = parts[0]
+                hashed_password = parts[1]
+                print(f"Website: {username}, password: {hashed_password}")  # Display hashed password
                 input("Press any key to proceed")
                 keychain()
-        elif choice == '3':
-            menu()
-        else:
-            print("Invalid choice. Please try again.")
-            keychain()
-    else:
-        print("Invalid key.")
-        '''
-        print(Fore.MAGENTA + "Work in progress..." + Style.RESET_ALL) 
+    elif choice == '3':
         menu()
-        '''
+    else:
+        print("Invalid choice. Please try again.")
+        keychain()
+    '''
+    print("Work in progress...")
+    menu()
 
 def check():
     if not os.path.exists('pass.txt'):
@@ -146,8 +111,6 @@ def menu():
     else:
         print('Input is invalid')
         menu()
-
-
 
 version = "1.3"
 
