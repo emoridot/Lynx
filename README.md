@@ -7,3 +7,4 @@ Check your password for leaks or generate a new strong password at XPass!
 5. Use it!
 # Notice
 If the program didn't run, download [python](https://www.python.org/downloads/release/python-3110/)
+
