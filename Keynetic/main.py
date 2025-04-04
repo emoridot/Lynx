@@ -4,18 +4,24 @@ import string
 import re
 from colorama import Fore, Style
 import random
+import hashlib
+import requests
 import os
 import bcrypt
 import base64
 from cryptography.fernet import Fernet
 
-version = "v1.3.1"
+version = "v1.4"
+HIBP_API_URL = "https://api.pwnedpasswords.com/range/"
 
 print(f"Keynetic {version}")
-key = input("Enter your access key for all passwords(leave blank if you dont have it(note : all the saved passwords will become invalid). If you'll enter invalid key, the program will crash!):")
+key = input("Enter your key for all passwords(leave blank if you dont have it): ")
 if key == "":
     newkey = Fernet.generate_key()
-    print("Save this code somewhere safe (The one that is after b' and ends on ', or the program wont run) : ", newkey)
+    print(      f"\n{Fore.YELLOW}❗ SAVE THIS SOMEHERE SAFE:{Style.RESET_ALL}\n"
+                f"{Fore.GREEN}{newkey.decode()}{Style.RESET_ALL}\n"
+                f"{Fore.RED} Without it you wont access your passwords!{Style.RESET_ALL}"
+                )
     key = newkey
     
     if os.path.exists('passwords.txt') : os.remove("passwords.txt")
@@ -27,28 +33,47 @@ def generate_random_name(length):
 
 
 class xpass:
-    def xpass():
-        checkinput = input(Fore.MAGENTA + "----------------------------------\nCheck your password for data breaches: \n->" + Style.RESET_ALL)
 
-        bpath = 'Keynetic'
-    
-        with open(bpath + '/breach.txt', 'r') as f:
-            if any(line.startswith(checkinput) for line in f):
-                print(Fore.GREEN + checkinput + Fore.MAGENTA + " was found in our database. We recommend changing it." + Style.RESET_ALL)
-            else:
-                check_pass = re.compile(r'''(
-                        ^.*(?=.{10,})           
-                        (?=.*\d)                
-                        (?=.*[a-z])             
-                        (?=.*[A-Z])             
-                        (?=.*[@#$%^&+=!]).*$    
-                        )''', re.VERBOSE)
-
-                status = Fore.GREEN + "strong" if check_pass.search(checkinput) else Fore.RED + "weak"
-                print(Fore.GREEN + checkinput + Fore.MAGENTA + " was not found in our database, the password is " + status + Style.RESET_ALL)
-
-        input("->")
+    def check_password():
+        password = input(f"{Fore.CYAN}Enter password to check:{Style.RESET_ALL} ").strip()
+        
+        
+        is_breached, count = xpass.check_hibp(password)
+        
+        
+        strength = xpass.password_strength(password)
+        strength_color = Fore.GREEN if strength == "strong" else Fore.RED
+        
+        print("\n" + "="*50)
+        if is_breached is None:
+            print(f"{Fore.YELLOW}⚠ Can't reach the API(API Error).{Style.RESET_ALL}")
+        elif is_breached:
+            print(f"{Fore.RED}⚠ Password found in {count} breaches!{Style.RESET_ALL}")
+        else:
+            print(f"{Fore.GREEN}✅ Password not found in breaches.{Style.RESET_ALL}")
+        
+        print(f"Strength: {strength_color}{strength}{Style.RESET_ALL}")
+        print("="*50 + "\n")
+        input(f"{Fore.CYAN}Press enter to continue{Style.RESET_ALL}")
         menu()
+
+    def check_hibp(password):
+        sha1_hash = hashlib.sha1(password.encode()).hexdigest().upper()
+        prefix, suffix = sha1_hash[:5], sha1_hash[5:]
+        
+        try:
+            time.sleep(1.5)
+            response = requests.get(f"{HIBP_API_URL}{prefix}", timeout=5)
+            response.raise_for_status()
+            
+            for line in response.text.splitlines():
+                if line.startswith(suffix):
+                    count = int(line.split(":")[1])
+                    return True, count
+            return False, 0
+        except requests.RequestException:
+            print(f"{Fore.RED}⚠ Error connecting to HBIP API.{Style.RESET_ALL}")
+            return None, 0
 
     def generator():
         print(Fore.MAGENTA + "_______________________________________________\nKeynetic Generator " + version + "\n_______________________________________________" + Style.RESET_ALL)
@@ -130,22 +155,29 @@ def check():
             menu()
         else:
             exit('Access denied')
-
+        
 def menu():
-    asciitext = (r"""
+
+    print(f"""
+{Fore.MAGENTA}
  ██╗  ██╗███████╗██╗   ██╗███╗   ██╗███████╗████████╗██╗ ██████╗
  ██║ ██╔╝██╔════╝╚██╗ ██╔╝████╗  ██║██╔════╝╚══██╔══╝██║██╔════╝
  █████╔╝ █████╗   ╚████╔╝ ██╔██╗ ██║█████╗     ██║   ██║██║     
  ██╔═██╗ ██╔══╝    ╚██╔╝  ██║╚██╗██║██╔══╝     ██║   ██║██║     
  ██║  ██╗███████╗   ██║   ██║ ╚████║███████╗   ██║   ██║╚██████╗
  ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝ ╚═════╝
-""")
-    print(Fore.MAGENTA + asciitext + Style.RESET_ALL)
-    print(Fore.MAGENTA + "version " + version + Style.RESET_ALL)
-    gen = input(Fore.MAGENTA + '_________________________\n|                       |\n|Select an option       |\n|[1] - Keynetic            |\n|[2] - Keynetic Generator  |\n|[3] - Keynetic Keychain   |\n|[4] - Exit             |\n|_______________________|\n-> ' + Style.RESET_ALL)
+{Style.RESET_ALL}
+{Fore.CYAN}Version: {version}{Style.RESET_ALL}""")
     
+    gen = input(f"""
+{Fore.MAGENTA}[1]{Style.RESET_ALL} Check password for breaches
+{Fore.MAGENTA}[2]{Style.RESET_ALL} Generate a secure password
+{Fore.MAGENTA}[3]{Style.RESET_ALL} Password manager
+{Fore.MAGENTA}[4]{Style.RESET_ALL} Exit
+{Fore.CYAN}> {Style.RESET_ALL}"""
+    )
     if gen == '1':
-        xpass.xpass()
+        xpass.checkpass()
     elif gen == '2':
         xpass.generator()
     elif gen == '3':
