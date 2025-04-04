@@ -13,6 +13,8 @@ from cryptography.fernet import Fernet
 
 version = "v1.4"
 HIBP_API_URL = "https://api.pwnedpasswords.com/range/"
+if os.name == 'nt':
+     clear = lambda: os.system('cls')
 
 print(f"Keynetic {version}")
 key = input("Enter your key for all passwords(leave blank if you dont have it): ")
@@ -55,6 +57,7 @@ class xpass:
         print(f"Strength: {strength_color}{strength}{Style.RESET_ALL}")
         print("="*50 + "\n")
         input(f"{Fore.CYAN}Press enter to continue{Style.RESET_ALL}")
+        if os.name == 'nt': clear()
         menu()
 
     def check_hibp(password):
@@ -74,6 +77,16 @@ class xpass:
         except requests.RequestException:
             print(f"{Fore.RED}⚠ Error connecting to HBIP API.{Style.RESET_ALL}")
             return None, 0
+        
+    def password_strength(password):
+        checks = [
+            len(password) >= 10,
+            re.search(r"\d", password),
+            re.search(r"[a-z]", password),
+            re.search(r"[A-Z]", password),
+            re.search(r"[@#$%^&+=!]", password),
+        ]
+        return "strong" if all(checks) else "weak"
 
     def generator():
         print(Fore.MAGENTA + "_______________________________________________\nKeynetic Generator " + version + "\n_______________________________________________" + Style.RESET_ALL)
@@ -85,6 +98,7 @@ class xpass:
 
         print(Fore.LIGHTGREEN_EX + "Generated password is : " + pwd + Style.RESET_ALL)
         input("Press enter to proceed...")
+        if os.name == 'nt': clear()
         menu()
 
     def encrypt(password):
@@ -109,13 +123,15 @@ class xpass:
 
                 with open('passwords.txt', 'a') as f:
                     f.write(f"{userinput}:{encrypted_pass}\n")
-        
+
+                if os.name == 'nt': clear()
                 xpass.keychain()
 
             elif choice == '2':
 
                 if not os.path.exists('passwords.txt'):
                     print("No passwords stored yet.")
+                    if os.name == 'nt': clear()
                     xpass.keychain()
             
                 with open('passwords.txt', 'r') as f:
@@ -127,11 +143,13 @@ class xpass:
                         print(f"Website: {username}, Password: {decrypted_password}")
                 
                     input("Press any key to proceed")
+                    if os.name == 'nt': clear()
                     xpass.keychain()
             elif choice == '3':
                 menu()
             else:
                 print("Invalid choice. Please try again.")
+                if os.name == 'nt': clear()
                 xpass.keychain()
         else:
             print("Invalid key.")
@@ -152,6 +170,7 @@ def check():
         hashed_apppass = f.read().strip()
         inputpass = input("Enter password to access the app: ")
         if bcrypt.checkpw(inputpass.encode('utf-8'), hashed_apppass.encode('utf-8')):
+            if os.name == 'nt': clear()
             menu()
         else:
             exit('Access denied')
@@ -177,15 +196,19 @@ def menu():
 {Fore.CYAN}> {Style.RESET_ALL}"""
     )
     if gen == '1':
-        xpass.checkpass()
+        if os.name == 'nt': clear()
+        xpass.check_password()
     elif gen == '2':
+        if os.name == 'nt': clear()
         xpass.generator()
     elif gen == '3':
+        if os.name == 'nt': clear()
         xpass.keychain()
     elif gen == '4':
         exit()
     else:
         print('Input is invalid')
+        if os.name == 'nt': clear()
         menu()
 
 
