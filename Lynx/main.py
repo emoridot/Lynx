@@ -114,7 +114,11 @@ class lynx:
     def keychain():
         if key != "":
             print(Fore.CYAN + "Welcome to Keynetic keychain" + Style.RESET_ALL)
-            choice = input(Fore.GREEN + "Menu:\n[1] - Add a new password\n[2] - View your passwords\n[3] - Exit to the menu \n-> " + Style.RESET_ALL)
+            choice = input(f"""
+{Fore.MAGENTA}[1]{Style.RESET_ALL} Add password
+{Fore.MAGENTA}[2]{Style.RESET_ALL} View your passwords
+{Fore.MAGENTA}[3]{Style.RESET_ALL} Exit
+{Fore.CYAN}> {Style.RESET_ALL}""")
     
             if choice == '1':
                 userinput = input("Enter a website for the password that you would like to add: ")
