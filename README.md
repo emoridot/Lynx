@@ -23,8 +23,8 @@
 
 ### Download the Latest Release
 1. Go to the [Releases](https://github.com/worthyworm/lynx/releases) page.
-2. Download the latest 7z
-3. Run the .exe file to start using **Lynx**.
+2. Download the latest 7z for your OS.
+3. Run the the executable file to start using **Lynx**.
 
 ---
 
