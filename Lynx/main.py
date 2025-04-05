@@ -22,7 +22,7 @@ if key == "":
     newkey = Fernet.generate_key()
     print(      f"\n{Fore.YELLOW}❗ SAVE THIS SOMEHERE SAFE:{Style.RESET_ALL}\n"
                 f"{Fore.GREEN}{newkey.decode()}{Style.RESET_ALL}\n"
-                f"{Fore.RED} Without it you wont access your passwords!{Style.RESET_ALL}"
+                f"{Fore.RED} Without it you wont access your passwords!{Style.RESET_ALL}\n"
                 )
     key = newkey
     
@@ -34,16 +34,16 @@ def generate_random_name(length):
     return rname
 
 
-class xpass:
+class lynx:
 
     def check_password():
         password = input(f"{Fore.CYAN}Enter password to check:{Style.RESET_ALL} ").strip()
         
         
-        is_breached, count = xpass.check_hibp(password)
+        is_breached, count = lynx.check_hibp(password)
         
         
-        strength = xpass.password_strength(password)
+        strength = lynx.password_strength(password)
         strength_color = Fore.GREEN if strength == "strong" else Fore.RED
         
         print("\n" + "="*50)
@@ -75,7 +75,7 @@ class xpass:
                     return True, count
             return False, 0
         except requests.RequestException:
-            print(f"{Fore.RED}⚠ Error connecting to HBIP API.{Style.RESET_ALL}")
+            print(f"{Fore.RED}⚠ Error connecting to HIBP API.{Style.RESET_ALL}")
             return None, 0
         
     def password_strength(password):
@@ -113,44 +113,48 @@ class xpass:
 
     def keychain():
         if key != "":
-            print("Welcome to Keynetic keychain [WIP]")
-            choice = input("Menu:\n[1] - Add a new password\n[2] - View your passwords\n[3] - Exit to the XPass\n-> ")
+            print(Fore.CYAN + "Welcome to Keynetic keychain" + Style.RESET_ALL)
+            choice = input(f"""
+{Fore.MAGENTA}[1]{Style.RESET_ALL} Add password
+{Fore.MAGENTA}[2]{Style.RESET_ALL} View your passwords
+{Fore.MAGENTA}[3]{Style.RESET_ALL} Exit
+{Fore.CYAN}> {Style.RESET_ALL}""")
     
             if choice == '1':
                 userinput = input("Enter a website for the password that you would like to add: ")
                 passinput = input("Enter password that will be saved and attached to the last input: ")
-                encrypted_pass = xpass.encrypt(passinput)
+                encrypted_pass = lynx.encrypt(passinput)
 
                 with open('passwords.txt', 'a') as f:
                     f.write(f"{userinput}:{encrypted_pass}\n")
 
                 if os.name == 'nt': clear()
-                xpass.keychain()
+                lynx.keychain()
 
             elif choice == '2':
 
                 if not os.path.exists('passwords.txt'):
                     print("No passwords stored yet.")
                     if os.name == 'nt': clear()
-                    xpass.keychain()
+                    lynx.keychain()
             
                 with open('passwords.txt', 'r') as f:
                     for line in f:
                         parts = line.strip().split(':')
                         username = parts[0]
                         encrypted_password = parts[1]
-                        decrypted_password = xpass.decrypt(encrypted_password)
+                        decrypted_password = lynx.decrypt(encrypted_password)
                         print(f"Website: {username}, Password: {decrypted_password}")
                 
                     input("Press any key to proceed")
                     if os.name == 'nt': clear()
-                    xpass.keychain()
+                    lynx.keychain()
             elif choice == '3':
                 menu()
             else:
                 print("Invalid choice. Please try again.")
                 if os.name == 'nt': clear()
-                xpass.keychain()
+                lynx.keychain()
         else:
             print("Invalid key.")
             '''
@@ -179,14 +183,20 @@ def menu():
 
     print(f"""
 {Fore.MAGENTA}
- ██╗  ██╗███████╗██╗   ██╗███╗   ██╗███████╗████████╗██╗ ██████╗
- ██║ ██╔╝██╔════╝╚██╗ ██╔╝████╗  ██║██╔════╝╚══██╔══╝██║██╔════╝
- █████╔╝ █████╗   ╚████╔╝ ██╔██╗ ██║█████╗     ██║   ██║██║     
- ██╔═██╗ ██╔══╝    ╚██╔╝  ██║╚██╗██║██╔══╝     ██║   ██║██║     
- ██║  ██╗███████╗   ██║   ██║ ╚████║███████╗   ██║   ██║╚██████╗
- ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝ ╚═════╝
+ 
+ ▄█       ▄██   ▄   ███▄▄▄▄   ▀████    ▐████▀ 
+███       ███   ██▄ ███▀▀▀██▄   ███▌   ████▀  
+███       ███▄▄▄███ ███   ███    ███  ▐███    
+███       ▀▀▀▀▀▀███ ███   ███    ▀███▄███▀    
+███       ▄██   ███ ███   ███    ████▀██▄     
+███       ███   ███ ███   ███   ▐███  ▀███    
+███▌    ▄ ███   ███ ███   ███  ▄███     ███▄  
+█████▄▄██  ▀█████▀   ▀█   █▀  ████       ███▄ 
+▀                                             
+
 {Style.RESET_ALL}
-{Fore.CYAN}Version: {version}{Style.RESET_ALL}""")
+{Fore.CYAN}Version: {version}{Style.RESET_ALL}
+{Fore.CYAN}Running OS : {os.name}{Style.RESET_ALL}""")
     
     gen = input(f"""
 {Fore.MAGENTA}[1]{Style.RESET_ALL} Check password for breaches
@@ -197,13 +207,13 @@ def menu():
     )
     if gen == '1':
         if os.name == 'nt': clear()
-        xpass.check_password()
+        lynx.check_password()
     elif gen == '2':
         if os.name == 'nt': clear()
-        xpass.generator()
+        lynx.generator()
     elif gen == '3':
         if os.name == 'nt': clear()
-        xpass.keychain()
+        lynx.keychain()
     elif gen == '4':
         exit()
     else:
