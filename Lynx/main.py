@@ -25,6 +25,8 @@ if key == "":
                 f"{Fore.RED} Without it you wont access your passwords!{Style.RESET_ALL}\n"
                 )
     key = newkey
+
+    time.sleep(3)
     
     if os.path.exists('passwords.txt') : os.remove("passwords.txt")
 
@@ -161,23 +163,6 @@ class lynx:
             print(Fore.MAGENTA + "Work in progress..." + Style.RESET_ALL) 
             menu()
             '''
-
-def check():
-    if not os.path.exists('pass.txt'):
-        apppass = input("pass.txt not found\nEnter a password that will be needed every time you open the app(for security): ")
-        hashed_apppass = bcrypt.hashpw(apppass.encode('utf-8'), bcrypt.gensalt())
-        with open('pass.txt', 'w') as f:
-            f.write(hashed_apppass.decode())
-        print("Operation completed.")
-
-    with open('pass.txt', 'r') as f:
-        hashed_apppass = f.read().strip()
-        inputpass = input("Enter password to access the app: ")
-        if bcrypt.checkpw(inputpass.encode('utf-8'), hashed_apppass.encode('utf-8')):
-            if os.name == 'nt': clear()
-            menu()
-        else:
-            exit('Access denied')
         
 def menu():
 
@@ -225,5 +210,4 @@ def menu():
 
 
 
-check()
 menu()
