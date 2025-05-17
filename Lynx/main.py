@@ -16,7 +16,7 @@ HIBP_API_URL = "https://api.pwnedpasswords.com/range/"
 if os.name == 'nt':
      clear = lambda: os.system('cls')
 
-print(f"Keynetic {version}")
+print(f"Lynx {version}")
 key = input("Enter your key for all passwords(leave blank if you dont have it): ")
 if key == "":
     newkey = Fernet.generate_key()
@@ -91,7 +91,7 @@ class lynx:
         return "strong" if all(checks) else "weak"
 
     def generator():
-        print(Fore.MAGENTA + "_______________________________________________\nKeynetic Generator " + version + "\n_______________________________________________" + Style.RESET_ALL)
+        print(Fore.MAGENTA + "_______________________________________________\nLynx Generator " + version + "\n_______________________________________________" + Style.RESET_ALL)
         pwd_length = int(input(Fore.MAGENTA + 'How many chars would you like to be in your password?\n' + Style.RESET_ALL))
         time.sleep(2)
     
@@ -115,7 +115,7 @@ class lynx:
 
     def keychain():
         if key != "":
-            print(Fore.CYAN + "Welcome to Keynetic keychain" + Style.RESET_ALL)
+            print(Fore.CYAN + "Welcome to Lynx keychain" + Style.RESET_ALL)
             choice = input(f"""
 {Fore.MAGENTA}[1]{Style.RESET_ALL} Add password
 {Fore.MAGENTA}[2]{Style.RESET_ALL} View your passwords
