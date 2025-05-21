@@ -13,8 +13,6 @@ from cryptography.fernet import Fernet
 
 version = "v1.4"
 HIBP_API_URL = "https://api.pwnedpasswords.com/range/"
-if os.name == 'nt':
-     clear = lambda: os.system('cls')
 
 print(f"Lynx {version}")
 key = input("Enter your key for all passwords(leave blank if you dont have it): ")
@@ -56,10 +54,10 @@ class lynx:
         else:
             print(f"{Fore.GREEN}✅ Password not found in breaches.{Style.RESET_ALL}")
         
-        print(f"Strength: {strength_color}{strength}{Style.RESET_ALL}")
+        # print(f"Strength: {strength_color}{strength}{Style.RESET_ALL}") Non-working
         print("="*50 + "\n")
         input(f"{Fore.CYAN}Press enter to continue{Style.RESET_ALL}")
-        if os.name == 'nt': clear()
+
         menu()
 
     def check_hibp(password):
@@ -100,7 +98,7 @@ class lynx:
 
         print(Fore.LIGHTGREEN_EX + "Generated password is : " + pwd + Style.RESET_ALL)
         input("Press enter to proceed...")
-        if os.name == 'nt': clear()
+
         menu()
 
     def encrypt(password):
@@ -130,14 +128,14 @@ class lynx:
                 with open('passwords.txt', 'a') as f:
                     f.write(f"{userinput}:{encrypted_pass}\n")
 
-                if os.name == 'nt': clear()
+        
                 lynx.keychain()
 
             elif choice == '2':
 
                 if not os.path.exists('passwords.txt'):
                     print("No passwords stored yet.")
-                    if os.name == 'nt': clear()
+            
                     lynx.keychain()
             
                 with open('passwords.txt', 'r') as f:
@@ -149,13 +147,13 @@ class lynx:
                         print(f"Website: {username}, Password: {decrypted_password}")
                 
                     input("Press any key to proceed")
-                    if os.name == 'nt': clear()
+            
                     lynx.keychain()
             elif choice == '3':
                 menu()
             else:
                 print("Invalid choice. Please try again.")
-                if os.name == 'nt': clear()
+        
                 lynx.keychain()
         else:
             print("Invalid key.")
@@ -191,19 +189,19 @@ def menu():
 {Fore.CYAN}> {Style.RESET_ALL}"""
     )
     if gen == '1':
-        if os.name == 'nt': clear()
         lynx.check_password()
+    
     elif gen == '2':
-        if os.name == 'nt': clear()
         lynx.generator()
+    
     elif gen == '3':
-        if os.name == 'nt': clear()
         lynx.keychain()
+    
     elif gen == '4':
         exit()
+    
     else:
         print('Input is invalid')
-        if os.name == 'nt': clear()
         menu()
 
 
