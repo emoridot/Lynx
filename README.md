@@ -3,7 +3,7 @@
   <img src="https://github.com/worthyworm/Lynx/blob/b1dc2e1bf67933cccbfaedb035d978cd7eff321f/Images/Logo.png" alt="Lynx Logo" width="700">
 </p>
 
-![CodeFactor](https://www.codefactor.io/repository/github/worthyworm/lynx)
+![CodeFactor](https://www.codefactor.io/repository/github/worthyworm/lynx/badge)
 
 # Lynx 🐾
 
